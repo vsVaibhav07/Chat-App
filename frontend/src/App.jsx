@@ -7,13 +7,18 @@ import { useEffect,useState } from 'react'
 import io from 'socket.io-client'
 import { setSocket } from './redux/socketSlice'
 import { setOnlineUsers } from './redux/otherUsersSlice'
+import Protected from './components/Protected'
 
 
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Homepage/>
+    element: (
+    <Protected>
+      <Homepage />
+    </Protected>
+  )
   },
   {
     path: '/register',
@@ -22,6 +27,14 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login/>
+  },
+  {
+    path: '/*',
+    element: (
+    <Protected>
+      <Homepage />
+    </Protected>
+  )
   },
 ])
 
