@@ -1,24 +1,28 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessages } from "../redux/messageSlice";
+import useGetRealTimeMessages from "../hooks/useGetRealTimeMessages";
 
-const Messages = () => {
+const Messages = ({ message }) => {
+  useGetRealTimeMessages(); 
   const scrollRef = useRef(null);
-  const [messages, setMessages] = useState([]);
+  const dispatch = useDispatch();
 
-  const selectedUser = useSelector((state) => state.selectedUser.selectedUser);
+  const { selectedUser } = useSelector((state) => state.otherUsers);
   const authUser = useSelector((state) => state.user.authUser);
-  const userId = authUser?.id; // ✅ fixed from _id to id
+  const { messages } = useSelector((state) => state.message);
+  const userId = authUser?.id;
 
   const fetchMessages = async () => {
     try {
       if (selectedUser?._id && userId) {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/message/${selectedUser._id}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/message/${selectedUser._id}`,
           { withCredentials: true }
         );
         if (res.data.success) {
-          setMessages(res.data.messages);
+          dispatch(setMessages(res.data.messages));
         }
       }
     } catch (error) {
@@ -30,7 +34,7 @@ const Messages = () => {
     if (selectedUser?._id && userId) {
       fetchMessages();
     }
-  }, [selectedUser, userId]);
+  }, [selectedUser, userId, message]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios, { Axios } from 'axios';
+import axios from 'axios';
+import { useState } from "react";
 import toast from 'react-hot-toast';
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +17,7 @@ const Signup = () => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-        const res= await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, formData,{headers:{'Content-Type':'application/json'},withCredentials:true});
+        const res= await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/register`, formData,{headers:{'Content-Type':'application/json'},withCredentials:true});
         if(res.data.success){
             navigate('/login');
             toast.success(res.data.message);
@@ -33,7 +33,7 @@ const Signup = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4 ">
-      <div className="w-full max-w-xl p-8 rounded-xl shadow-xl shadow-gray-700 border border-gray-300 h-full  bg-white-100 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 ">
+      <div className="w-full max-w-xl p-8 rounded-xl bg-white/70 shadow-xl shadow-gray-700 border border-gray-300 h-full  bg-white-100 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 ">
         <h1 className="text-center text-3xl font-semibold text-[#3b3b3b] mb-6">
           Sign Up
         </h1>

@@ -8,3 +8,13 @@ body{
     background-repeat: no-repeat;
     
 }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(236, 72, 153, 0.5); /* pink-400 */
+  border-radius: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}

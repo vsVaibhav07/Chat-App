@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setOtherUsers } from "../redux/otherUsersSlice";
 
@@ -9,7 +9,7 @@ const useFetchUsers = () => {
   useEffect(() => {
     const getAllUsers = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user`, {
           withCredentials: true,
         });
         if (response.data.success) {
