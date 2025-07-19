@@ -2,7 +2,7 @@
 @plugin "daisyui";
 
 body{
-    background: url('./bg.webp');
+    background: url('/bg.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
