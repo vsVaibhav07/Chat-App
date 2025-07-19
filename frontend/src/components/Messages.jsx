@@ -5,7 +5,7 @@ import { setMessages } from "../redux/messageSlice";
 import useGetRealTimeMessages from "../hooks/useGetRealTimeMessages";
 
 const Messages = ({ message }) => {
-  useGetRealTimeMessages(); 
+  useGetRealTimeMessages();
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -18,7 +18,9 @@ const Messages = ({ message }) => {
     try {
       if (selectedUser?._id && userId) {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/message/${selectedUser._id}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/message/${
+            selectedUser._id
+          }`,
           { withCredentials: true }
         );
         if (res.data.success) {
@@ -50,6 +52,15 @@ const Messages = ({ message }) => {
 
   return (
     <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2">
+      <div className="flex flex-col items-center p-4">
+        <div className="avatar p-1">
+          <div className="ring-primary ring-offset-base-100 w-24 rounded-full ring-2 ring-offset-2">
+            <img src={selectedUser.profilePhoto} />
+          </div>
+        </div>
+        <h2 className="text-white font-serif font-medium text-xl">{selectedUser.fullName}</h2>
+        <p className="text-blue-950 font-medium ">{selectedUser.bio}</p>
+      </div>
       {messages.map((message, index) => (
         <div
           key={index}

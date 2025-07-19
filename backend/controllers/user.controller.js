@@ -55,7 +55,7 @@ export const login = async (req, res) => {
             userId: user._id,
         }
         const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-        return res.status(200).cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, secure: true,sameSite: 'none'  }).json({ message: "Login successful", success: true, user: { id: user._id, username: user.username, fullName: user.fullName, profilePhoto: user.profilePhoto } });
+        return res.status(200).cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true, secure: true,sameSite: 'none'  }).json({ message: "Login successful", success: true, user: { id: user._id, username: user.username, fullName: user.fullName, profilePhoto: user.profilePhoto ,bio:user.bio,gender:user.gender } });
     } catch (error) {
         console.error("Error in user login:", error);
         return res.status(500).json({ message: "Internal server error" });

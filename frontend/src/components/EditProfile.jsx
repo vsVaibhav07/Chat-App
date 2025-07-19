@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { setAuthUser, setUserProfile } from "../redux/userSlice";
 
 const EditProfile = () => {
-  const { user } = useSelector((store) => store.user);
+  const { authUser } = useSelector((store) => store.user);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,16 +24,16 @@ const EditProfile = () => {
 
 
   useEffect(() => {
-    if (user) {
+    if (authUser) {
       setInput({
-        fullName: user.fullName || "",
-        bio: user.bio || "",
-        gender: user.gender || "",
-        profilePhoto: user.profilePhoto || "",
+        fullName: authUser?.fullName || "",
+        bio: authUser?.bio || "",
+        gender: authUser?.gender || "",
+        profilePhoto: authUser?.profilePhoto || "",
       });
-      setPreviewImage(user.profilePhoto || "");
+      setPreviewImage(authUser?.profilePhoto || "");
     }
-  }, [user]);
+  }, [authUser]);
 
   const fileChangeHandler = (e) => {
     const file = e.target.files?.[0];
@@ -69,7 +69,7 @@ const EditProfile = () => {
       if (res.data.success) {
         toast.success(res.data.message);
         const updatedUser = {
-          ...user,
+          ...authUser,
           fullName: res.data.user?.fullName,
           bio: res.data.user?.bio,
           gender: res.data.user?.gender,
@@ -81,6 +81,7 @@ const EditProfile = () => {
       }
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
+      console.log(error);
     } finally {
       setLoading(false);
     }
