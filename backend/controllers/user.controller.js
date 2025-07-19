@@ -1,6 +1,9 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cloudinary from '../utils/cloudinary.js';
+import getDataUri from "../utils/datauri.js";
+
 
 
 export const register = async (req, res) => {
@@ -82,3 +85,36 @@ export const getOtherUsers = async (req, res) => {
             return res.status(500).json({ message: "Internal server error", success: false });
         }
     }
+
+export const editProfile=async (req,res)=>{
+    try {
+        const userId=req.id;
+        const{gender,bio}=req.body;
+        const profilePhoto=req.file
+        let cloudResponse;
+        if(profilePhoto){
+            const fileUri=getDataUri(profilePhoto); 
+            cloudResponse = await cloudinary.uploader.upload(fileUri);
+        }
+        const user=await User.findById(userId).select("-password");
+        
+        if(!user){
+            return res.status(404).json({
+                message:"User Not Found",
+                success:false
+            })
+        }
+        if(bio) user.bio=bio;
+        if(gender) user.gender=gender;
+        if(profilePhoto) user.profilePhoto=cloudResponse.secure_url;
+
+        await user.save();
+        return res.status(200).json({
+            message:"Profile Updated Successfully",
+            success:true,
+            user
+        })
+    } catch (error) {
+        console.error(error)
+    }
+}

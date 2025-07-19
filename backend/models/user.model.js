@@ -22,6 +22,10 @@ const userSchema =new mongoose.Schema({
         type:String,
         enum:["male","female"],
         required:true,
+    },
+    bio:{
+        type:String,
+        default:"Hey there ,Let's start Chatting"
     }
 },{ timestamps: true });
 export default mongoose.model("User",userSchema);
