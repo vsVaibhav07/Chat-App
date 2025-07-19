@@ -11,12 +11,14 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+  const [signupText,setSignupText]=useState("Sign up");
 
   const navigate=useNavigate();
 
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
+      setSignupText("Signing up...");
         const res= await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/register`, formData,{headers:{'Content-Type':'application/json'},withCredentials:true});
         if(res.data.success){
             navigate('/login');
@@ -24,6 +26,8 @@ const Signup = () => {
         }
     } catch (error) {
         toast.error(error.response?.data?.message);
+    }finally{
+      setSignupText("Sign up");
     }
    
     setFormData({
@@ -156,7 +160,7 @@ const Signup = () => {
               type="submit"
               className="bg-[#d6336c] hover:bg-[#c2215a] text-white font-semibold px-6 py-2 rounded transition duration-300"
             >
-              Sign Up
+              {signupText}
             </button>
           </div>
         </form>

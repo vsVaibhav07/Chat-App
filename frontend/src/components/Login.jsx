@@ -10,10 +10,13 @@ const Login = () => {
     const [formData,setFormData]=useState({username: "", password: ""});
     const navigate=useNavigate();
     const dispatch=useDispatch();
+    const [loginText,setLoginText]=useState("Log in");
 
     const handleSubmit = async(e) => {
+      
     e.preventDefault();
     try {
+      setLoginText("Logging in...");
         const res= await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/login`, formData,{headers:{'Content-Type':'application/json'},withCredentials:true});
         if(res.data.success){
             navigate('/');
@@ -22,6 +25,8 @@ const Login = () => {
         }
     } catch (error) {
         toast.error(error.response?.data?.message);
+    }finally{
+      setLoginText("Log in")
     }
     setFormData({
       username: "",
@@ -76,7 +81,7 @@ const Login = () => {
               type="submit"
               className="bg-[#d6336c] hover:bg-[#c2215a] text-white font-semibold px-6 py-2 rounded transition duration-300"
             >
-              Log in
+             {loginText}
             </button>
           </div>
         </form>

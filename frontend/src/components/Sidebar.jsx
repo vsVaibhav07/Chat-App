@@ -12,7 +12,7 @@ const Sidebar = () => {
    const { selectedUser } = useSelector((state) => state.otherUsers);
 
   return (
-    <div className={`${selectedUser ? "hidden md:block  " : "block"} w-full  md:w-3/7 lg:w-1/3 h-[94vh] p-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}>
+    <div className={`${selectedUser ? "hidden md:flex  " : "block"} w-full  md:w-3/7 lg:w-1/3 h-[94vh] p-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}>
       
       <form className="mb-4">
         <div className="flex items-center border border-gray-300 bg-white/70 backdrop-blur rounded-md shadow">
@@ -35,7 +35,7 @@ const Sidebar = () => {
       </div>
 
   
-      <div className="pt-4 border-t border-gray-300 mt-4">
+      <div className="pt-4 border-t bottom-10 h-max-10 border-gray-300 mt-4">
         <Logout />
       </div>
     </div>
