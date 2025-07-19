@@ -4,6 +4,7 @@ import { setSelectedUser } from "../redux/otherUsersSlice";
 
 
 const OtherUsers = ({ searchText }) => {
+  useGetAllUsers();
   const { otherUsers, onlineUsers } = useSelector((state) => state.otherUsers);
   const dispatch = useDispatch();
   const isOnline = (userId) => onlineUsers?.includes(userId);
