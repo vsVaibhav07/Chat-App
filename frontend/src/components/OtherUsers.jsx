@@ -1,10 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedUser } from "../redux/otherUsersSlice";
+import useFetchUsers from "../hooks/useGetAllUsers";
 
 
 const OtherUsers = ({ searchText }) => {
-  useGetAllUsers();
+  useFetchUsers();
   const { otherUsers, onlineUsers } = useSelector((state) => state.otherUsers);
   const dispatch = useDispatch();
   const isOnline = (userId) => onlineUsers?.includes(userId);
