@@ -6,7 +6,7 @@ import useFetchUsers from "../hooks/useGetAllUsers";
 
 const OtherUsers = ({ searchText }) => {
   useFetchUsers();
-  const { otherUsers, onlineUsers } = useSelector((state) => state.otherUsers);
+  const { otherUsers, onlineUsers,selectedUser } = useSelector((state) => state.otherUsers);
   const dispatch = useDispatch();
   const isOnline = (userId) => onlineUsers?.includes(userId);
 
@@ -28,7 +28,7 @@ const OtherUsers = ({ searchText }) => {
             <div
               key={user._id}
               onClick={() => selectUser(user)}
-              className="flex  items-center gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-pink-300 transition-all cursor-pointer"
+              className={` flex  items-center gap-4 p-4 ${selectedUser === user ? "bg-blue-200" : "bg-white "} rounded-lg shadow-sm hover:shadow-pink-300 transition-all cursor-pointer`}
             >
               <div className={`avatar ${isOnline(user._id) ? "avatar-online" : ""}  w-14 h-14 rounded-full `}>
                 <img 
