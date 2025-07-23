@@ -26,6 +26,9 @@ app.use(cors(corsOptions));
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Backend is running!' });
 });
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Backend is healthy!' });
+});
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/message", messageRoutes);
