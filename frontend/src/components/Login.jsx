@@ -12,7 +12,7 @@ const Login = () => {
   const [loginText, setLoginText] = useState("Log in");
   const { authUser } = useSelector((state) => state.user);
 
-  useEffect(async () => {
+  useEffect(() => {
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/health`, {
       withCredentials: true,
     }) 
