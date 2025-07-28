@@ -69,7 +69,7 @@ function App() {
 
   return (
      
-    <div className='sm:p-4 bg-red-700 h-screen flex items-center justify-center'>
+    <div className='sm:p-4 h-screen flex items-center justify-center'>
     <RouterProvider router={router}/>
 
     </div>
