@@ -10,7 +10,7 @@ const Homepage = () => {
   return (
      userProfile?
       (<EditProfile/>):
-    <div className="flex  md:flex-row h-screen w-full p-6 max-h-screen overflow-hidden">
+    <div className="flex  md:flex-row h-screen w-full p-1.5 sm:p-6 max-h-screen overflow-hidden">
 
    
       <Sidebar />

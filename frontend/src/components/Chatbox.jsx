@@ -38,9 +38,9 @@ const Chatbox = () => {
   }
 
   return (
-    <div className="h-[94vh] w-[80%] md:w-4/7 mx-auto flex flex-col shadow-xl bg-gray-200/60 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-300">
+    <div className="h-[94vh] w-full sm:w-[90%] md:w-4/7  mx-auto flex flex-col shadow-xl bg-gray-200/60 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-300">
       
-      <div className="flex items-center gap-4  px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-500/50 shadow-md">
+      <div className="flex items-center gap-2 sm:gap-4 px-2 sm:px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-500/50 shadow-md">
         <div onClick={()=>{dispatch(setSelectedUser(null))}} className="hover:scale-110 text-2xl md:hidden"><MdArrowBack/></div>
         <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white">
           <img
@@ -65,13 +65,13 @@ const Chatbox = () => {
       </div>
 
      
-      <div className="flex items-center gap-2 px-4 py-3 border-t bg-white/80 backdrop-blur">
+      <div className="flex items-center gap-0.5 sm:gap-2 px-0.5 sm:px-4 py-3 border-t bg-white/80 backdrop-blur">
         <input
           type="text"
           placeholder="Type a message..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white text-gray-700 placeholder-gray-400"
+          className="flex-1 w-[90%] px-2 sm:px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white text-gray-700 placeholder-gray-400"
         />
         <button
           onClick={() => handleMessageSend(message)}

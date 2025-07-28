@@ -4,7 +4,6 @@ import Logout from "./Logout";
 import useFetchUsers from "../hooks/useGetAllUsers";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedUser } from "../redux/otherUsersSlice";
 import { setUserProfile } from "../redux/userSlice";
 
 const Sidebar = () => {
@@ -22,7 +21,7 @@ const Sidebar = () => {
     <div
       className={`${
         selectedUser ? "hidden md:flex  " : "block"
-      } w-full  md:w-3/7 lg:w-1/3 h-[94vh] p-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}
+      } w-full  md:w-3/7 lg:w-1/3 h-[94vh] px-0.5 sm:px-4 py-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}
     >
       <div className="flex gap-2 ">
         <div className="avatar cursor-pointer">
@@ -38,7 +37,7 @@ const Sidebar = () => {
               placeholder="Search..."
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="flex-1 font-semibold p-2 outline-none bg-transparent text-gray-800 placeholder:text-gray-500"
+              className="flex-1 w-[90%] font-semibold p-2 outline-none bg-transparent text-gray-800 placeholder:text-gray-500"
             />
             <button type="submit" className="p-2">
               <IoIosSearch className="text-gray-500 text-2xl cursor-pointer" />
