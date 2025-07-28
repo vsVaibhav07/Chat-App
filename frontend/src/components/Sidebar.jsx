@@ -23,14 +23,14 @@ const Sidebar = () => {
         selectedUser ? "hidden md:flex  " : "block"
       } w-full  md:w-3/7 lg:w-1/3 h-[94vh] px-0.5 sm:px-4 py-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}
     >
-      <div className="flex gap-2 ">
+      <div className="flex gap-1 sm:gap-2  px-1">
         <div className="avatar cursor-pointer">
           <div onClick={handleProfile} className="ring-primary ring-offset-base-100 w-10 h-10 rounded-full ring-2 ring-offset-2">
             <img src={authUser.profilePhoto} />
           </div>
         </div>
 
-        <form className="mb-4 flex-1">
+        <form className="mb-4 w-[90%] flex-1">
           <div className="flex items-center border border-gray-300 bg-white/70 backdrop-blur rounded-md shadow">
             <input
               type="text"
