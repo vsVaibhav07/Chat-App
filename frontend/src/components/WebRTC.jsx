@@ -1,12 +1,7 @@
-
-
-
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { FiX, FiPhone, FiPhoneOff } from "react-icons/fi";
-
-
 
 const WebRTCModal = ({ selectedUser, open, setOpen }) => {
   const { socket } = useSelector((state) => state.socket);
@@ -14,28 +9,36 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
 
   const [pc, setPc] = useState(null);
   const [localStream, setLocalStream] = useState(null);
-  const [callStatus, setCallStatus] = useState("idle"); // idle | ringing | connected
-  const [incoming, setIncoming] = useState(null); // { from, name, offer }
+  const [callStatus, setCallStatus] = useState("idle");
+  const [incoming, setIncoming] = useState(null);
   const candidateQueueRef = useRef([]);
 
   const myVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
+  // Debug auth user
+  useEffect(() => {
+    console.log("🧑 Auth user:", authUser);
+  }, [authUser]);
 
   const createPeer = (remoteId) => {
+    console.log("🛠 Creating peer connection with", remoteId);
     const configuration = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
     const connection = new RTCPeerConnection(configuration);
 
     if (localStream) {
+      console.log("🎥 Adding local tracks to peer connection");
       localStream.getTracks().forEach((t) => connection.addTrack(t, localStream));
     }
 
     connection.ontrack = (ev) => {
+      console.log("🎞 Remote track received:", ev.streams[0]);
       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = ev.streams[0];
     };
 
     connection.onicecandidate = (ev) => {
       if (ev.candidate) {
+        console.log("🧊 Sending ICE candidate", ev.candidate);
         socket.emit("iceCandidate", {
           candidate: ev.candidate,
           from: authUser.id,
@@ -45,73 +48,73 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
     };
 
     connection.onconnectionstatechange = () => {
-      if (connection.connectionState === "connected") {
-        setCallStatus("connected");
-      }
-      if (connection.connectionState === "disconnected" || connection.connectionState === "failed") {
-        // keep endCall to a graceful cleanup
-        endCall(false);
-      }
+      console.log("🔗 Connection state:", connection.connectionState);
+      if (connection.connectionState === "connected") setCallStatus("connected");
+      if (["disconnected", "failed"].includes(connection.connectionState)) endCall(false);
     };
 
     return connection;
   };
 
- 
   useEffect(() => {
     let mounted = true;
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((s) => {
         if (!mounted) return;
+        console.log("🎤 Local stream obtained");
         setLocalStream(s);
         if (myVideoRef.current) myVideoRef.current.srcObject = s;
       })
-      .catch(() => {
-        toast.error("Camera/Microphone permission denied");
-      });
-
+      .catch(() => toast.error("Camera/Microphone permission denied"));
     return () => (mounted = false);
   }, []);
 
-  // socket listeners
+  // Socket listeners for caller and receiver
   useEffect(() => {
     if (!socket) return;
 
     const onCallUser = ({ offer, from, name }) => {
-      // receive an incoming call
+      console.log("📞 Incoming callUser event received!");
+      console.log("From:", from, "Name:", name, "Offer:", offer);
       setIncoming({ from, name, offer });
       setCallStatus("ringing");
       toast(`${name} is calling you...`);
     };
 
     const onCallAccepted = async ({ answer }) => {
+      console.log("✅ callAccepted event received. Answer:", answer);
       if (pc) {
         try {
           await pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(answer)));
+          console.log("🌐 Remote description applied successfully");
           setCallStatus("connected");
         } catch (e) {
-          console.error("Error applying remote answer", e);
+          console.error("❌ Error applying remote answer:", e);
         }
       }
     };
 
-    const onIceCandidate = async ({ candidate }) => {
+    const onIceCandidate = async ({ candidate, from }) => {
+      console.log("🧊 ICE candidate received from", from, candidate);
       if (candidate) {
         if (pc) {
           try {
             await pc.addIceCandidate(new RTCIceCandidate(candidate));
+            console.log("✅ ICE candidate added");
           } catch (e) {
-            console.warn("Failed to add candidate immediately, queueing.", e);
+            console.warn("⚠️ Queueing ICE candidate", e);
             candidateQueueRef.current.push(candidate);
           }
         } else {
+          console.log("⚠️ PC not ready, queueing ICE candidate");
           candidateQueueRef.current.push(candidate);
         }
       }
     };
 
     const onCallEnded = () => {
+      console.log("📴 callEnded event received");
       endCall(false);
     };
 
@@ -128,15 +131,15 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
     };
   }, [socket, pc, localStream]);
 
- 
   useEffect(() => {
     const applyQueued = async () => {
       if (pc && candidateQueueRef.current.length > 0) {
         for (const c of candidateQueueRef.current) {
           try {
             await pc.addIceCandidate(new RTCIceCandidate(c));
+            console.log("✅ Queued ICE candidate applied", c);
           } catch (e) {
-            console.warn("Failed to add queued candidate", e);
+            console.warn("❌ Failed queued candidate", e);
           }
         }
         candidateQueueRef.current = [];
@@ -154,6 +157,7 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
 
     const offer = await connection.createOffer();
     await connection.setLocalDescription(offer);
+    console.log("📤 Call offer created and local description set:", offer);
 
     socket.emit("callUser", {
       offer: JSON.stringify(connection.localDescription),
@@ -171,8 +175,11 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
     setPc(connection);
 
     await connection.setRemoteDescription(new RTCSessionDescription(JSON.parse(incoming.offer)));
+    console.log("🌐 Remote description set for incoming call");
+
     const answer = await connection.createAnswer();
     await connection.setLocalDescription(answer);
+    console.log("📤 Answer created and local description set", answer);
 
     socket.emit("answerCall", {
       answer: JSON.stringify(connection.localDescription),
@@ -185,17 +192,9 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
   };
 
   const endCall = (emit = true) => {
-    if (pc) {
-      try {
-        pc.close();
-      } catch (e) {
-        console.warn(e);
-      }
-    }
-
-    if (localStream) {
-      localStream.getTracks().forEach((t) => t.stop());
-    }
+    console.log("📴 Ending call");
+    if (pc) pc.close();
+    if (localStream) localStream.getTracks().forEach((t) => t.stop());
 
     if (emit && (selectedUser || incoming)) {
       socket.emit("callEnded", {
@@ -209,17 +208,12 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
     setCallStatus("idle");
     setIncoming(null);
     candidateQueueRef.current = [];
-
-    // close the modal
     setOpen(false);
   };
 
- 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") {
-        endCall(false);
-      }
+      if (e.key === "Escape") endCall(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -230,7 +224,6 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={() => endCall(false)} />
-
       <div className="relative w-full max-w-4xl bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
         {/* header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -240,10 +233,11 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
             </div>
             <div>
               <div className="text-white font-semibold">{selectedUser?.fullName}</div>
-              <div className="text-xs text-gray-400">{callStatus === "connected" ? "In call" : callStatus === "ringing" ? "Ringing..." : "Ready to call"}</div>
+              <div className="text-xs text-gray-400">
+                {callStatus === "connected" ? "In call" : callStatus === "ringing" ? "Ringing..." : "Ready to call"}
+              </div>
             </div>
           </div>
-
           <div className="flex items-center gap-2">
             <button onClick={() => endCall(false)} className="btn btn-ghost text-white btn-sm">
               <FiX /> Close
@@ -275,31 +269,19 @@ const WebRTCModal = ({ selectedUser, open, setOpen }) => {
                   <FiPhone /> Start Call
                 </button>
               )}
-
               {callStatus === "ringing" && incoming && (
                 <>
-                  <button onClick={answerIncoming} className="btn btn-success w-full">
-                    Answer
-                  </button>
-                  <button onClick={() => endCall()} className="btn btn-error w-full">
-                    Reject
-                  </button>
+                  <button onClick={answerIncoming} className="btn btn-success w-full">Answer</button>
+                  <button onClick={() => endCall()} className="btn btn-error w-full">Reject</button>
                 </>
               )}
-
-              {callStatus === "ringing" && !incoming && (
-                <div className="text-sm text-gray-300 text-center">Calling...</div>
-              )}
-
+              {callStatus === "ringing" && !incoming && <div className="text-sm text-gray-300 text-center">Calling...</div>}
               {callStatus === "connected" && (
                 <>
                   <div className="text-sm text-gray-300 text-center">Call connected</div>
-                  <button onClick={() => endCall()} className="btn btn-danger w-full">
-                    <FiPhoneOff /> End Call
-                  </button>
+                  <button onClick={() => endCall()} className="btn btn-danger w-full"><FiPhoneOff /> End Call</button>
                 </>
               )}
-
               <div className="text-xs text-gray-400 mt-2">Tip: click outside or press Esc to close (this will end the call).</div>
             </div>
           </div>

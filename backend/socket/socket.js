@@ -38,9 +38,11 @@ const setupSocket = (app) => {
       io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
 
-    // 🔹 Caller -> send offer
+    
     socket.on("callUser", ({ offer, to, from, name }) => {
+
       const receiverSocketId = getSocketId(to);
+      console.log("📞 callUser event:", { from, to }); 
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("callUser", { offer, from, name });
         console.log(`📞 Call offer from ${from} to ${to}`);
@@ -49,7 +51,7 @@ const setupSocket = (app) => {
       }
     });
 
-    // 🔹 Callee -> send answer
+   
     socket.on("answerCall", ({ answer, to, from }) => {
       const callerSocketId = getSocketId(to);
       if (callerSocketId) {
@@ -60,7 +62,7 @@ const setupSocket = (app) => {
       }
     });
 
-    // 🔹 Exchange ICE candidates
+  
     socket.on("iceCandidate", ({ candidate, to, from }) => {
       const targetSocketId = getSocketId(to);
       if (targetSocketId) {
@@ -71,7 +73,7 @@ const setupSocket = (app) => {
       }
     });
 
-    // 🔹 End Call
+ 
     socket.on("callEnded", ({ to }) => {
       const receiverSocketId = getSocketId(to);
       if (receiverSocketId) {
@@ -82,7 +84,7 @@ const setupSocket = (app) => {
       }
     });
 
-    // ⚡ Keep messaging events as-is
+   
     socket.on("sendMessage", ({ to, message }) => {
       const receiverSocketId = getSocketId(to);
       if (receiverSocketId) {

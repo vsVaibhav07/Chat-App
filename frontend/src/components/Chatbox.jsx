@@ -1,6 +1,4 @@
-// -----------------------------
-// File: Chatbox.jsx
-// -----------------------------
+
 import axios from "axios";
 import React, { useState } from "react";
 import { FiSend } from "react-icons/fi";
@@ -85,7 +83,7 @@ const Chatbox = () => {
             📞
           </button>
 
-          {/* WebRTC modal is rendered as a portal-like fixed overlay so it won't disturb chat layout */}
+         
           {open && (
             <WebRTCModal selectedUser={selectedUser} open={open} setOpen={setOpen} />
           )}
