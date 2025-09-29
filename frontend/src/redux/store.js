@@ -3,6 +3,7 @@ import userReducer from './userSlice.js';
 import otherUserReducer from './otherUsersSlice.js';
 import messageReducer from './messageSlice.js';
 import socketReducer from './socketSlice.js';
+import webRTCReducer from './webRTCSlice.js';
 import { persistStore, persistReducer } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   otherUsers: otherUserReducer,
   message: messageReducer,
   socket: socketReducer,
+  webRTC: webRTCReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

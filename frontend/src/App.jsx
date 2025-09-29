@@ -8,6 +8,8 @@ import io from 'socket.io-client'
 import { setSocket } from './redux/socketSlice'
 import { setOnlineUsers } from './redux/otherUsersSlice'
 import Protected from './components/Protected'
+import IncomingCall from './components/call/IncomingCall'
+import WebRTC from './components/call/WebRTC'
 
 
 
@@ -71,6 +73,8 @@ function App() {
      
     <div className='sm:p-4 h-[90%] md:h-screen flex items-center justify-center'>
     <RouterProvider router={router}/>
+    <IncomingCall/>
+    <WebRTC/>
 
     </div>
   
