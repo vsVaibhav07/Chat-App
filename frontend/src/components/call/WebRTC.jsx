@@ -8,12 +8,12 @@ const WebRTC = () => {
     (state) => state.webRTC
   );
 
-  const { startCall, answerIncoming, endCall } = useWebRTC();
+  const {answerIncoming, endCall } = useWebRTC();
 
   const myVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
-  // ✅ always call hooks first, condition later
+
   useEffect(() => {
     if (myVideoRef.current && localStream) {
       myVideoRef.current.srcObject = localStream;
@@ -26,7 +26,6 @@ const WebRTC = () => {
     }
   }, [remoteStream]);
 
-  // ✅ condition after hooks
   if (callStatus === "idle") return null;
 
   return (
@@ -36,7 +35,6 @@ const WebRTC = () => {
         onClick={() => endCall()}
       />
       <div className="relative w-full max-w-4xl bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <h2 className="text-white font-semibold">
             {incoming ? incoming.name : "Video Call"}
@@ -49,7 +47,6 @@ const WebRTC = () => {
           </button>
         </div>
 
-        {/* Video area */}
         <div className="flex flex-col md:flex-row gap-4 p-4">
           <video
             ref={remoteVideoRef}

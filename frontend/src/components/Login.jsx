@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { setAuthUser } from "../redux/userSlice";
+import { Eye, EyeClosed } from "lucide-react";
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -11,12 +12,13 @@ const Login = () => {
   const dispatch = useDispatch();
   const [loginText, setLoginText] = useState("Log in");
   const { authUser } = useSelector((state) => state.user);
+  const [showPass, setShowPass] = useState(false);
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/health`, {
       withCredentials: true,
-    }) 
-    if(authUser) {
+    });
+    if (authUser) {
       navigate("/");
     }
   }, []);
@@ -50,13 +52,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4 ">
+    <div className="flex justify-center max-w-screen items-center min-h-screen px-4 ">
       <div className="w-full max-w-xl p-8 rounded-xl shadow-xl bg-white/70 shadow-gray-700 border border-gray-300 h-full  bg-white-100 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 ">
         <h1 className="text-center text-3xl font-semibold text-[#3b3b3b] mb-6">
           Log in
         </h1>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-x-4">
             <label htmlFor="username" className="w-32 font-bold text-[#2f2f2f]">
               Username
             </label>
@@ -74,22 +76,33 @@ const Login = () => {
             />
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex relative flex-col md:flex-row md:items-center gap-x-4">
             <label htmlFor="password" className="w-32 font-bold text-[#2f2f2f]">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              value={formData.password}
-              placeholder="Enter your password"
-              className="flex-1 p-2 rounded border border-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            />
+            <div className="relative flex-1">
+              <input
+                type={showPass ? "text" : "password"}
+                name="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                value={formData.password}
+                placeholder="Enter your password"
+                className="w-full p-2 pr-10 rounded border border-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-300"
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => setShowPass(!showPass)}
+                className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-gray-600"
+              >
+                {showPass ? <Eye /> : <EyeClosed />}
+              </button>
+            </div>
           </div>
 
           <div className="text-center mt-6">

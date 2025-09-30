@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages } from "../redux/messageSlice";
 import useGetRealTimeMessages from "../hooks/useGetRealTimeMessages";
+import { FiDownload } from "react-icons/fi";
 
 const Messages = ({ message }) => {
   useGetRealTimeMessages();
@@ -58,8 +59,12 @@ const Messages = ({ message }) => {
             <img src={selectedUser.profilePhoto} />
           </div>
         </div>
-        <h2 className="text-white font-serif font-medium text-xl">{selectedUser.fullName}</h2>
-        <p className="text-blue-950 font-medium text-center ">{selectedUser.bio}</p>
+        <h2 className="text-white font-serif font-medium text-xl">
+          {selectedUser.fullName}
+        </h2>
+        <p className="text-blue-950 font-medium text-center ">
+          {selectedUser.bio}
+        </p>
       </div>
       {messages.map((message, index) => (
         <div
@@ -69,13 +74,41 @@ const Messages = ({ message }) => {
           }`}
         >
           <div
-            className={`chat-bubble ${
+            className={`chat-bubble w-fit max-w-4/7 flex flex-col ${
               message.senderId === userId
                 ? "bg-pink-100 text-gray-800"
                 : "bg-gray-100 text-gray-800"
             }`}
           >
-            {message.text}
+            {message?.mediaUrl && message.mediaType === "image" && (
+              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                <img
+                  src={message.mediaUrl}
+                  alt="Message media"
+                  className="w-full h-auto object-cover rounded-xl shadow-md"
+                />
+              </div>
+            )}
+            {message?.mediaUrl && message.mediaType === "video" && (
+              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                <video
+                  src={message.mediaUrl}
+                  controls
+                  className="w-full h-auto rounded-xl shadow-md"
+                />
+              </div>
+            )}
+
+            {message?.mediaUrl && message.mediaType === "raw" && (
+              <a
+                href={message.mediaUrl}
+                className="flex items-center gap-2 sm:px-3 sm:py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-blue-600 font-medium"
+                download
+              >
+                <FiDownload /> Download File
+              </a>
+            )}
+            {message?.text && message.text}
           </div>
           <div ref={scrollRef} className="w-0 h-0" />
         </div>

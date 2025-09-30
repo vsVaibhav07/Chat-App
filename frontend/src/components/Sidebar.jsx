@@ -21,7 +21,7 @@ const Sidebar = () => {
     <div
       className={`${
         selectedUser ? "hidden md:flex  " : "block"
-      } w-full  md:w-3/7 lg:w-1/3 h-[94vh] px-0.5 sm:px-4 py-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}
+      } w-full  md:w-3/7 lg:w-1/3 h-[90vh] md:h-[94vh] px-0.5 sm:px-4 py-4 flex flex-col shadow-2xl shadow-gray-800 rounded-xl bg-gray-500/60 overflow-hidden `}
     >
       <div className="flex gap-1 sm:gap-2  px-1">
         <div className="avatar cursor-pointer">
