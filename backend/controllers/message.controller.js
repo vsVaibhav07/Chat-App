@@ -1,4 +1,6 @@
+import getAssistantReply from "../config/chatBot.js";
 import Conversation from "../models/conversation.model.js";
+import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { getSocketId, io } from "../socket/socket.js";
 import cloudinary from "../utils/cloudinary.js";
@@ -56,6 +58,25 @@ export const sendMessage = async (req, res) => {
         getConversation.save(),
         newMessage.save()
       ]);
+    }
+
+      const AiAssistant = await User.findOne({ username: "assistant" })
+       if (AiAssistant._id.toString() === receiverId) {
+      const reply = await getAssistantReply(message)
+      const newReply = await Message.create({
+        senderId: receiverId,
+        receiverId: senderId,
+        text: reply || "",
+        mediaUrl: "",
+        mediaType:""
+      });
+      if (newReply) {
+        getConversation.messages.push(newReply._id);
+        await Promise.all([
+          getConversation.save(),
+          newReply.save()
+        ]);
+      }
     }
 
     //SocketIO

@@ -5,7 +5,7 @@ import { setMessages } from "../redux/messageSlice";
 import useGetRealTimeMessages from "../hooks/useGetRealTimeMessages";
 import { FiDownload } from "react-icons/fi";
 
-const Messages = ({ message }) => {
+const Messages = ({ lastMessage, message }) => {
   useGetRealTimeMessages();
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
@@ -37,7 +37,7 @@ const Messages = ({ message }) => {
     if (selectedUser?._id && userId) {
       fetchMessages();
     }
-  }, [selectedUser, userId, message]);
+  }, [selectedUser, userId, message,lastMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -76,8 +76,8 @@ const Messages = ({ message }) => {
           <div
             className={`chat-bubble w-fit max-w-4/7 flex flex-col ${
               message.senderId === userId
-                ? "bg-pink-100 text-gray-800"
-                : "bg-gray-100 text-gray-800"
+                ? "bg-green-300 text-gray-800"
+                : "bg-pink-300 text-gray-800"
             }`}
           >
             {message?.mediaUrl && message.mediaType === "image" && (
@@ -110,9 +110,17 @@ const Messages = ({ message }) => {
             )}
             {message?.text && message.text}
           </div>
-          <div ref={scrollRef} className="w-0 h-0" />
         </div>
       ))}
+      {lastMessage && (
+        <div className="chat chat-end">
+          <div className="chat-bubble w-fit max-w-4/7 flex flex-col bg-green-300 text-gray-800">
+            {lastMessage}
+          </div>
+        </div>
+      )}
+
+      <div ref={scrollRef} className="w-0 h-0" />
     </div>
   );
 };

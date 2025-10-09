@@ -18,7 +18,7 @@ const Logout = () => {
           withCredentials: true,
         }
       );
-      console.log(res.data);
+    
 
       if (res.data.success) {
         dispatch(setAuthUser(null));

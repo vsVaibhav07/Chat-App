@@ -5,7 +5,8 @@ import userRoutes from './routes/user.route.js';
 import messageRoutes from './routes/message.route.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import {setupSocket} from './socket/socket.js'; // function import
+import {setupSocket} from './socket/socket.js'; 
+import createAssistant from './config/createAssistant.js';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.status(200).json({ message: 'Backend is running!' });
 });
 app.get('/health', (req, res) => {
@@ -33,10 +34,12 @@ app.get('/health', (req, res) => {
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/message", messageRoutes);
 
+await connectDb();
+await createAssistant()
+
 // ✅ Setup socket with same app
 const { server } = setupSocket(app);
 
 server.listen(PORT, () => {
-  connectDb();
   console.log(`Server is running on port ${PORT}`);
 });

@@ -1,21 +1,24 @@
 import  { useRef } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { FiDownload, FiPlus, FiSend } from "react-icons/fi";
+import {  FiPlus, FiSend } from "react-icons/fi";
 import { addMessage } from "../redux/messageSlice";
 import { useDispatch } from "react-redux";
 
-const ChatInput = ({ message, setMessage, file, setFile, receiverId }) => {
+const ChatInput = ({setLastMessage, message, setMessage, file, setFile, receiverId }) => {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
   const handleMessageSend = async (e) => {
     e.preventDefault();
     if (!message.trim() && !file) return;
+    setLastMessage(message);
+    const lastMessage=message
+    setMessage("");
 
     try {
       const formData = new FormData();
-      if (message) formData.append("message", message);
+      if (message) formData.append("message", lastMessage);
       if (file) formData.append("file", file);
 
       const res = await axios.post(
@@ -27,12 +30,14 @@ const ChatInput = ({ message, setMessage, file, setFile, receiverId }) => {
         }
       );
       if (res.data.success && res.data.newMessage) {
+        setLastMessage("");
         dispatch(addMessage(res.data.newMessage));
       }
 
       setMessage("");
       setFile(null);
     } catch (error) {
+      setMessage(lastMessage)
       console.error(error);
       toast.error("Failed to send message.");
     }
