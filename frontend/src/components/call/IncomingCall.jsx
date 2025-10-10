@@ -1,8 +1,11 @@
 import { FiPhoneIncoming, FiPhoneOff, FiUser } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import useWebRTC from "../../hooks/useWebRTC";
 
-const IncomingCall = ({ callerName = "Unknown Caller", onAnswer, onReject }) => {
+
+const IncomingCall = ({ callerName = "Unknown Caller" }) => {
   const { callStatus } = useSelector((store) => store.webRTC);
+    const {answerIncoming, endCall } = useWebRTC();
 
   if (callStatus !== "ringing") {
     return null;
@@ -23,13 +26,13 @@ const IncomingCall = ({ callerName = "Unknown Caller", onAnswer, onReject }) => 
        
         <div className="flex gap-6 mt-6">
           <button
-            onClick={onAnswer}
+            onClick={answerIncoming}
             className="bg-green-600 hover:bg-green-700 transition px-6 py-3 rounded-full flex items-center gap-2 shadow-lg"
           >
             <FiPhoneIncoming size={20} /> Answer
           </button>
           <button
-            onClick={onReject}
+            onClick={endCall}
             className="bg-red-600 hover:bg-red-700 transition px-6 py-3 rounded-full flex items-center gap-2 shadow-lg"
           >
             <FiPhoneOff size={20} /> Reject

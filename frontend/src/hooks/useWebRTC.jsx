@@ -133,7 +133,7 @@ const useWebRTC = () => {
     const onCallUser = ({ offer, from, name }) => {
       dispatch(setIncoming({ from, name, offer }));
       dispatch(setCallStatus("ringing"));
-      toast(`${name} is calling you...`);
+      // toast(`${name} is calling you...`);
     };
 
     const onCallAccepted = async ({ answer }) => {
