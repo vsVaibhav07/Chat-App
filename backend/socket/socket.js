@@ -25,7 +25,7 @@ const setupSocket = (app) => {
 
     if (userId) {
       userSocketMap[userId] = socket.id;
-      console.log(`User connected: ${userId} (${socket.id})`);
+      // console.log(`User connected: ${userId} (${socket.id})`);
     }
 
     io.emit("getOnlineUsers", Object.keys(userSocketMap));

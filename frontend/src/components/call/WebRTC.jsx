@@ -12,11 +12,18 @@ const WebRTC = () => {
 
   const myVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  
 
 
   useEffect(() => {
     if (myVideoRef.current && localStream) {
       myVideoRef.current.srcObject = localStream;
+      const playPromise = myVideoRef.current.play();
+      if (playPromise !== undefined) {
+      playPromise.catch((error) => {
+        console.warn("Auto-play prevented:", error);
+      });
+    }
     }
   }, [localStream]);
 
@@ -54,7 +61,7 @@ const WebRTC = () => {
             playsInline
             className="flex-1 bg-black h-[60vh] object-cover rounded-lg"
           />
-          <div className="w-56 flex flex-col gap-3">
+          <div className="w-56 bg-black flex flex-col gap-3">
             <video
               ref={myVideoRef}
               muted
