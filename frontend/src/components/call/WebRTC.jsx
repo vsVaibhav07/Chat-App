@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { FiPhoneOff } from "react-icons/fi";
 import useWebRTC from "../../hooks/useWebRTC";
@@ -7,23 +7,26 @@ const WebRTC = () => {
   const { callStatus, incoming, localStream, remoteStream } = useSelector(
     (state) => state.webRTC
   );
+ 
 
   const {answerIncoming, endCall } = useWebRTC();
+  const [myVideoEl, setMyVideoEl] = useState(null);
+  
 
   const myVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+   useEffect(() => {
+  if (myVideoEl && localStream) {
+    myVideoEl.srcObject = localStream;
+  }
+}, [myVideoEl, localStream]);
   
 
-
   useEffect(() => {
+    
     if (myVideoRef.current && localStream) {
       myVideoRef.current.srcObject = localStream;
-      const playPromise = myVideoRef.current.play();
-      if (playPromise !== undefined) {
-      playPromise.catch((error) => {
-        console.warn("Auto-play prevented:", error);
-      });
-    }
+    
     }
   }, [localStream]);
 
@@ -61,9 +64,9 @@ const WebRTC = () => {
             playsInline
             className="flex-1 bg-black h-[60vh] object-cover rounded-lg"
           />
-          <div className="w-56 bg-black flex flex-col gap-3">
+          <div className="w-56  flex flex-col gap-3">
             <video
-              ref={myVideoRef}
+              ref={setMyVideoEl}
               muted
               autoPlay
               playsInline
