@@ -123,7 +123,7 @@ const Messages = ({ searching, lastMessage, message }) => {
           </div>
         </div>
       )}
-      {searching && (
+      {searching && selectedUser.fullName==="Ai Assistant" && (
         <div className="chat chat-start">
           <div className="animate-pulse text-gray-200 ">
             Finding result fromm web...
