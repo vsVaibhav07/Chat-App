@@ -5,7 +5,7 @@ import { setMessages } from "../redux/messageSlice";
 import useGetRealTimeMessages from "../hooks/useGetRealTimeMessages";
 import { FiDownload } from "react-icons/fi";
 
-const Messages = ({ lastMessage, message }) => {
+const Messages = ({ searching, lastMessage, message }) => {
   useGetRealTimeMessages();
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
@@ -14,6 +14,7 @@ const Messages = ({ lastMessage, message }) => {
   const authUser = useSelector((state) => state.user.authUser);
   const { messages } = useSelector((state) => state.message);
   const userId = authUser?.id;
+  const ReversedMessages = [...messages].reverse();
 
   const fetchMessages = async () => {
     try {
@@ -37,7 +38,7 @@ const Messages = ({ lastMessage, message }) => {
     if (selectedUser?._id && userId) {
       fetchMessages();
     }
-  }, [selectedUser, userId, message,lastMessage]);
+  }, [selectedUser, userId, message, lastMessage]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -62,60 +63,70 @@ const Messages = ({ lastMessage, message }) => {
         <h2 className="text-white font-serif font-medium text-xl">
           {selectedUser.fullName}
         </h2>
-        <p className="text-blue-950 font-medium text-center ">
+        <p className="text-blue-400 font-medium text-center ">
           {selectedUser.bio}
         </p>
       </div>
-      {messages.map((message, index) => (
-        <div
-          key={index}
-          className={`chat ${
-            message.senderId === userId ? "chat-end" : "chat-start"
-          }`}
-        >
+      <div className="flex flex-col-reverse">
+        {ReversedMessages.map((message, index) => (
           <div
-            className={`chat-bubble w-fit max-w-4/7 flex flex-col ${
-              message.senderId === userId
-                ? "bg-green-300 text-gray-800"
-                : "bg-pink-300 text-gray-800"
+            key={index}
+            className={`chat  ${
+              message.senderId === userId ? "chat-end" : "chat-start"
             }`}
           >
-            {message?.mediaUrl && message.mediaType === "image" && (
-              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-                <img
-                  src={message.mediaUrl}
-                  alt="Message media"
-                  className="w-full h-auto object-cover rounded-xl shadow-md"
-                />
-              </div>
-            )}
-            {message?.mediaUrl && message.mediaType === "video" && (
-              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-                <video
-                  src={message.mediaUrl}
-                  controls
-                  className="w-full h-auto rounded-xl shadow-md"
-                />
-              </div>
-            )}
+            <div
+              className={`chat-bubble w-fit max-w-4/7 flex flex-col ${
+                message.senderId === userId
+                  ? "bg-green-300 text-gray-800"
+                  : "bg-pink-300 text-gray-800"
+              }`}
+            >
+              {message?.mediaUrl && message.mediaType === "image" && (
+                <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                  <img
+                    src={message.mediaUrl}
+                    alt="Message media"
+                    className="w-full h-auto object-cover rounded-xl shadow-md"
+                  />
+                </div>
+              )}
+              {message?.mediaUrl && message.mediaType === "video" && (
+                <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                  <video
+                    src={message.mediaUrl}
+                    controls
+                    className="w-full h-auto rounded-xl shadow-md"
+                  />
+                </div>
+              )}
 
-            {message?.mediaUrl && message.mediaType === "raw" && (
-              <a
-                href={message.mediaUrl}
-                className="flex items-center gap-2 sm:px-3 sm:py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-blue-600 font-medium"
-                download
-              >
-                <FiDownload /> Download File
-              </a>
-            )}
-            {message?.text && message.text}
+              {message?.mediaUrl && message.mediaType === "raw" && (
+                <a
+                  href={message.mediaUrl}
+                  className="flex items-center gap-2 sm:px-3 sm:py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-blue-600 font-medium"
+                  download
+                >
+                  <FiDownload /> Download File
+                </a>
+              )}
+              {message?.text && message.text}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
       {lastMessage && (
         <div className="chat chat-end">
           <div className="chat-bubble w-fit max-w-4/7 flex flex-col bg-green-300 text-gray-800">
             {lastMessage}
+          </div>
+        </div>
+      )}
+      {searching && (
+        <div className="chat chat-start">
+          <div className="animate-pulse text-gray-200 ">
+            Finding result fromm web...
           </div>
         </div>
       )}

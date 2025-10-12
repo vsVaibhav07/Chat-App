@@ -10,7 +10,11 @@ const messageSlice=createSlice({
             state.messages = action.payload;
         },
         addMessage(state, action) {
-            state.messages.push(action.payload);
+            const exists = state.messages.find(msg => msg._id === action.payload._id);
+            if(!exists){
+                state.messages.push(action.payload);
+            }
+            
         }
     }
 })

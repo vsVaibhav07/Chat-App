@@ -5,7 +5,7 @@ import {  FiPlus, FiSend } from "react-icons/fi";
 import { addMessage } from "../redux/messageSlice";
 import { useDispatch } from "react-redux";
 
-const ChatInput = ({setLastMessage, message, setMessage, file, setFile, receiverId }) => {
+const ChatInput = ({setLastMessage,setSearching, message, setMessage, file, setFile, receiverId }) => {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
@@ -20,7 +20,7 @@ const ChatInput = ({setLastMessage, message, setMessage, file, setFile, receiver
       const formData = new FormData();
       if (message) formData.append("message", lastMessage);
       if (file) formData.append("file", file);
-
+      setSearching(true);
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/message/send/${receiverId}`,
         formData,
@@ -29,11 +29,13 @@ const ChatInput = ({setLastMessage, message, setMessage, file, setFile, receiver
           withCredentials: true,
         }
       );
+      
       if (res.data.success && res.data.newMessage) {
-        setLastMessage("");
         dispatch(addMessage(res.data.newMessage));
+        setLastMessage("");
+       
       }
-
+      setSearching(false);
       setMessage("");
       setFile(null);
     } catch (error) {

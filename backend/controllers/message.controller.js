@@ -18,18 +18,18 @@ export const sendMessage = async (req, res) => {
     let mediaType;
 
     if (req.file) {
-      const mime=req.file.mimetype;
+      const mime = req.file.mimetype;
       let resourceType = "auto";
 
-      if(mime.startsWith("image/")){
-        resourceType="image";
-      }else if(mime.startsWith("video/")){
-        resourceType="video";
-      }else{
+      if (mime.startsWith("image/")) {
+        resourceType = "image";
+      } else if (mime.startsWith("video/")) {
+        resourceType = "video";
+      } else {
         resourceType = "raw";
       }
       const fileUrl = getDataUri(req.file);
-      const uploadResponse = await cloudinary.uploader.upload(fileUrl,{ resource_type: resourceType, folder: "chatApp" });
+      const uploadResponse = await cloudinary.uploader.upload(fileUrl, { resource_type: resourceType, folder: "chatApp" });
       mediaUrl = uploadResponse.secure_url;
       mediaType = uploadResponse.resource_type;
     }
@@ -43,8 +43,6 @@ export const sendMessage = async (req, res) => {
       })
     }
 
-
-
     const newMessage = await Message.create({
       senderId,
       receiverId,
@@ -52,32 +50,56 @@ export const sendMessage = async (req, res) => {
       mediaUrl: mediaUrl || "",
       mediaType: mediaType || ""
     });
-    if (newMessage) {
-      getConversation.messages.push(newMessage._id);
-      await Promise.all([
-        getConversation.save(),
-        newMessage.save()
-      ]);
-    }
 
-      const AiAssistant = await User.findOne({ username: "assistant" })
-       if (AiAssistant._id.toString() === receiverId) {
-      const reply = await getAssistantReply(message)
+    const AiAssistant = await User.findOne({ username: "assistant" })
+    if (AiAssistant._id.toString() === receiverId) {
+
+
+      const conversation = await Conversation.findOne({
+        participants: { $all: [senderId, receiverId] }
+      }).populate({ path: "messages", options: { sort: { createdAt: -1 }, limit: 8 } });
+
+      const chatHistory = conversation.messages.map((msg) => ({
+        role: msg.senderId.toString() === senderId ? "user" : "assistant",
+        content: msg.text,
+      })).reverse();
+
+
+
+      const reply = await getAssistantReply(message, chatHistory)
       const newReply = await Message.create({
         senderId: receiverId,
         receiverId: senderId,
         text: reply || "",
         mediaUrl: "",
-        mediaType:""
+        mediaType: ""
       });
-      if (newReply) {
-        getConversation.messages.push(newReply._id);
+
+      if (newMessage && newReply) {
+        getConversation.messages.push(newMessage._id,newReply._id);
         await Promise.all([
           getConversation.save(),
+          newMessage.save(),
           newReply.save()
         ]);
       }
     }
+    else {
+
+      if (newMessage) {
+        getConversation.messages.push(newMessage._id);
+        await Promise.all([
+          getConversation.save(),
+          newMessage.save()
+        ]);
+      }
+
+    }
+
+
+
+
+
 
     //SocketIO
     const receiverSocketId = getSocketId(receiverId);

@@ -11,6 +11,7 @@ import ChatInput from "./ChatInput";
 const Chatbox = () => {
   const [message, setMessage] = useState("");
   const [lastMessage,setLastMessage]=useState("")
+  const [searching,setSearching]=useState(false);
   const { selectedUser, onlineUsers } = useSelector(
     (state) => state.otherUsers
   );
@@ -72,7 +73,7 @@ const Chatbox = () => {
       </div>
 
       <div className="flex-1 px-4 py-3 overflow-y-auto custom-scrollbar">
-        <Messages message={message} lastMessage={lastMessage} />
+        <Messages message={message} lastMessage={lastMessage} searching={searching}/>
       </div>
 
       <div>
@@ -87,6 +88,7 @@ const Chatbox = () => {
       </div>
 
      <ChatInput
+     setSearching={setSearching}
      setLastMessage={setLastMessage}
   message={message}
   setMessage={setMessage}

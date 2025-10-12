@@ -15,7 +15,6 @@ const useGetRealTimeMessages = () => {
 
     socket.on("newMessage", handleNewMessage);
 
-    // ✅ Clean up to avoid memory leaks / duplicate listeners
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
